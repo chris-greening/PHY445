@@ -19,6 +19,30 @@ tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
 #matplotlib color arg accepts values between 0 and 1, recalc rgb vals  
 tableau20 = [(r/255, g/255, b/255) for r,g,b in tableau20]
 
+color_scheme = [
+    (123, 172, 49),
+    (251, 120, 16),
+    (25, 155, 206),
+    (134, 1, 238),
+    (86, 174, 139),
+    (143, 104, 255),
+    (2, 183, 46),
+    (211, 96, 91),
+    (233, 20, 81),
+    (11, 109, 51),
+    (31, 65, 150),
+    (42, 88, 106),
+    (200, 149, 54),
+    (184, 81, 154),
+    (138, 28, 18),
+    (79, 40, 175),
+    (132, 84, 26),
+    (191, 148, 141),
+    (231, 47, 194),
+    (134, 153, 238)
+]
+color_scheme = [(r/255, g/255, b/255) for r,g,b in color_scheme]
+
 def professional(func):
     """Decorator that applies nicer default stylings to pyplot graphs"""
     i = 0
@@ -26,7 +50,7 @@ def professional(func):
     def wrapper_with_args(*args, **kwargs):
         nonlocal i 
         i += 1
-        color = tableau20[i]
+        color = color_scheme[i]
         return func(*args, **kwargs, color=color)
     return wrapper_with_args
 
