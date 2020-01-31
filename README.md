@@ -1,6 +1,10 @@
 # PHY445
 Repo for Stony Brook University PHY445 material
 
+Group:
+* Norman Cameron 
+* Chris Greening 
+
 ## Python Docs
 * [Numpy](https://numpy.org/devdocs/reference/index.html)
 * [Scipy](https://docs.scipy.org/doc/scipy/reference/)
