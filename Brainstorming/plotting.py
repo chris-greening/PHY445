@@ -42,8 +42,9 @@ if __name__ == '__main__':
             osc_func = partial(damped_oscillator, val, val) #bind values    
             data = theoretical(osc_func, 0, 20, .01)   #generate theoretical data 
             x,y = data 
-            plot_func(x, y)
+            plot_func(x, y, label=str(val))
         plt.title(title)
+        plt.legend()
 
     #ugly graph 
     plt.figure(0)
