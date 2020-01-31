@@ -5,7 +5,10 @@ Group:
 * Norman Cameron 
 * Chris Greening 
 
-## Python Docs
+### Reference Materials 
+* [An Introduction to Error Analysis by John Taylor](http://hep.ucsb.edu/courses/ph128_18f/Taylor.pdf)
+
+### Python Docs
 * [Numpy](https://numpy.org/devdocs/reference/index.html)
 * [Scipy](https://docs.scipy.org/doc/scipy/reference/)
 * [Matplotlib](https://matplotlib.org/contents.html)
