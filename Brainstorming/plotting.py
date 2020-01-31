@@ -9,6 +9,8 @@ from numpy import exp, sin
 
 from theoretical_tools import theoretical
 
+#TODO: pick a color scheme that is clear 
+
 #alternative color scheme because matplotlib is uuuuuugly 
 tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),    
             (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),    
@@ -62,7 +64,7 @@ if __name__ == '__main__':
 
     def graph(plot_func, title):
         """Takes plot function and title as args"""
-        for val in range(1,5):
+        for val in range(1,7):
             osc_func = partial(damped_oscillator, val, val) #bind values    
             data = theoretical(osc_func, 0, 20, .01)   #generate theoretical data 
             x,y = data 
