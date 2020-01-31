@@ -1,7 +1,14 @@
 # PHY445
 Repo for Stony Brook University PHY445 material
 
-## Python Docs
+Group:
+* Norman Cameron 
+* Chris Greening 
+
+### Reference Materials 
+* [An Introduction to Error Analysis by John Taylor](http://hep.ucsb.edu/courses/ph128_18f/Taylor.pdf)
+
+### Python Docs
 * [Numpy](https://numpy.org/devdocs/reference/index.html)
 * [Scipy](https://docs.scipy.org/doc/scipy/reference/)
 * [Matplotlib](https://matplotlib.org/contents.html)
