@@ -32,18 +32,18 @@ if __name__ == '__main__':
 
             return a*x**2 + b*x + c
             
-            #bind a,b,c values 
-            quad_func = partial(quadratic, 1, 2, 1)
+        #bind a,b,c values 
+        quad_func = partial(quadratic, 1, 2, 1)
 
-            #calculate data 
-            data = theoretical(quad_func, -50, 50,.1)
-            
-            #unpack tuple of data 
-            x,y = data
+        #calculate data 
+        data = theoretical(quad_func, -50, 50,.1)
+        
+        #unpack tuple of data 
+        x,y = data
 
-            #plot
-            plt.plot(x,y)
-            plt.show()
+        #plot
+        plt.plot(x,y)
+        plt.show()
 
     def damped_oscillator_example():
         def damped_oscillator(a, b, t):
