@@ -5,10 +5,15 @@ Group:
 * Norman Cameron 
 * Chris Greening 
 
-### Reference Materials 
+## Reference Materials 
+
+#### Online PDF's
 * [An Introduction to Error Analysis by John Taylor](http://hep.ucsb.edu/courses/ph128_18f/Taylor.pdf)
 
-### Python Docs
+#### Videos 
+* [Curve fitting with Scipy](https://www.youtube.com/watch?v=Jl-Ye38qkRc)
+
+#### Python Docs
 * [Numpy](https://numpy.org/devdocs/reference/index.html)
 * [Scipy](https://docs.scipy.org/doc/scipy/reference/)
 * [Matplotlib](https://matplotlib.org/contents.html)
