@@ -19,3 +19,4 @@ Group:
 * [Matplotlib](https://matplotlib.org/contents.html)
 * [Pandas](https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html#user-guide)
 * [scikit-learn](https://scikit-learn.org/stable/)
+* [uncertainties](https://pythonhosted.org/uncertainties/)
