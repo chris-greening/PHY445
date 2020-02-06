@@ -20,6 +20,9 @@ def theoretical(
     returning a tuple of x and y coordinates
     """
 
+    if min_x > max_x and step > 0: 
+        raise ValueError('If min_x > max_x, a negative step must be specified')
+
     x_data = arange(min_x, max_x, step)
     y_data = func(x_data)
     return (x_data, y_data)
