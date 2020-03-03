@@ -1,0 +1,25 @@
+def subtract_offset(data: np.array, offset):
+	return data - offset
+
+def tuplize_df(df, **kwargs):
+	"""
+	This function is a general means of taking data (with uncertainty) from a dataframe and making tuples
+	"""
+	return_values = {}
+	for key in kwargs:
+		col1, col2 = kwargs[key]	
+
+		central = df[col1]
+		uncertainty = df[col2]
+		return_values[key] = (central, uncertainty)
+	
+	return return_values
+
+def import_magnetocalibs(df):
+	B_tuple = ("B", "delB")
+	data: dict = tuplize_df(df, B_data=B_tuple)
+	return data["B_data"]
+
+def det_magnetores(orient1, orient2):
+	#look into scipy.stats
+	
