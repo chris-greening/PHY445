@@ -4,10 +4,42 @@
 
 from typing import List 
 
-import pandas as pd 
 import matplotlib.pyplot as plt 
+import pandas as pd 
 
 from data.data import * 
+
+class LabDataFrame(pd.DataFrame):
+	def __init__(self, *args, **kwargs):
+		"""
+		Wrapper around pandas.DataFrame with tasks specialized to what 
+		we will be doing for lab.
+		"""
+		super().__init__(*args, **kwargs)
+		self.args = args 
+		self.kwargs = kwargs 
+	
+	def to_tuple(self, **kwargs):
+		return_values = {}
+		for key, headers in kwargs.items():
+			
+			#Build list of selected columns then convert to tuple 
+			data = []
+			for header in headers:
+				data.append(self[header])
+			else: 
+				data = tuple(data)
+
+			return_values[key] = data 
+
+		return return_values
+
+def import_excel(*args, **kwargs):
+	"""Import data to a LabDataFrame"""
+	df = pd.read_excel(*args, **kwargs)
+	return LabDataFrame(df)
+
+
 
 def subtract_offset(arr: List[float], offset: float):
 	"""Subtract an offset form an array"""
