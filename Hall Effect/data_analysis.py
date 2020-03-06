@@ -6,6 +6,7 @@ from typing import List
 
 import matplotlib.pyplot as plt 
 import pandas as pd 
+from scipy.optimize import curve_fit
 
 from data.data import * 
 
@@ -33,6 +34,20 @@ class LabDataFrame(pd.DataFrame):
 			return_values[key] = data 
 
 		return return_values
+
+	def fit(self, func, xcol, ycol, yerr_col):
+		"""Returns fit data based on a given function and column headers"""
+
+		#TODO: this only works for linear regression, generalize args for nonlinear fits
+		x_data = self[xcol]
+		y_data = self[ycol]
+		yerr_data = self[yerr_col]
+		
+		ans, cov = curve_fit(func, x_data, y_data, sigma=yerr_data) 
+		m, b = ans 
+		y_fit = func(x_data, m, b)
+		
+		return y_fit 
 
 def import_excel(*args, **kwargs):
 	"""Import data to a LabDataFrame"""
@@ -86,6 +101,20 @@ def det_magnetores(orient1, orient2):
 
 if __name__ == '__main__':
 
-	data = B_vs_Vh(df_77K)
+	from equations import linear
+
+	df = LabDataFrame(df_77K)
+	
+	#Fit data 
+	x_data = df['B']
+	y_fit_data = df.fit(linear, 'B', 'V_H', 'delV_H')
+	plt.plot(x_data, y_fit_data)
+
+	#Experimental data 
+	y_exp = df['V_H']
+	yerr_exp = df['delV_H']
+	plt.errorbar(x_data, y_exp, yerr=yerr_exp, fmt='o')
+	
+	plt.show()
 	
 
