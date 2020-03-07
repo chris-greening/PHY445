@@ -84,7 +84,7 @@ def graph_77K_reverse():
 
 
 def graph_300K():
-    """Plot Hall voltage at 77K"""
+    """Plot Hall voltage at 300K"""
 
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 300K")
@@ -98,7 +98,7 @@ def graph_300K():
 
 
 def graph_300K_reverse():
-    """Plot Hall voltage at 77K"""
+    """Plot Hall voltage at 300K"""
 
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 300K with Reverse Current")
@@ -112,6 +112,8 @@ def graph_300K_reverse():
     plt.show()
 
 def graph_77K_300K():
+    """Plot 77K and 300K on the same graph to show difference"""
+    
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K")
 
@@ -123,10 +125,28 @@ def graph_77K_300K():
     plt.show()
 
 def graph_77K_forward_and_reverse():
+    """Plot 77K with forward and reverse currents"""
+
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K, Forward and Reverse Current")
 
     ax, R_H = plot_data(ax, (ds.df_77K, '77K Forward Current'), (ds.df_77K_reverse, '77K Reverse Current'))
+
+    # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
+    ax.legend(loc='upper right')
+
+    plt.show()
+
+
+def graph_300K_forward_and_reverse():
+    """Plot 77K with forward and reverse currents"""
+
+    ax = plt.subplot(111)
+    graph_metadata(
+        ax, "Magnetic Field vs. Hall Voltage at 300K, Forward and Reverse Current")
+
+    ax, R_H = plot_data(ax, (ds.df_300K, '300K Forward Current'),
+                        (ds.df_300K_reverse, '300K Reverse Current'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
     ax.legend(loc='upper right')
