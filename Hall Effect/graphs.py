@@ -7,7 +7,7 @@ from scipy.optimize import curve_fit
 import numpy as np 
 
 from equations import linear 
-import data_analysis as ds
+import data_analysis as da
 
 def graph_metadata(ax, title):
     """Place metadata onto our graph"""
@@ -37,15 +37,18 @@ def plot_data(ax, *args):
         V_Ho, sigV_H = data['V_H']
 
         #Fit data 
-        V_Hfit, R_H, b = df.fit(linear, 'B', 'V_H', 'delV_H')
-
-        #Get absolute value of data so that postive
+        V_Hfit = df['V_H_fit']
+        R_H = df.R_H
+        
+        #Get absolute value of data so that positive
         V_Ho = np.abs(V_Ho)
         V_Hfit = np.abs(V_Hfit)
 
         #Plot onto the axes
         ax.plot(B, V_Hfit, label=f'{label} best fit')
         ax.errorbar(B, V_Ho, yerr=sigV_H, fmt='.', label=f'{label} observed')
+
+        print(f'{label} Hall Coefficient: {R_H}')
 
         #append Hall coefficient to arr
         R_H = np.abs(R_H)
@@ -57,9 +60,9 @@ def graph_77K():
     """Plot Hall voltage at 77K"""
 
     ax = plt.subplot(111)
-    graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K and 300K")
+    graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K")
 
-    ax, R_H_tuple = plot_data(ax, (ds.df_77K, '77K'))
+    ax, R_H_tuple = plot_data(ax, (da.df_77K, '77K'))
     
     ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
@@ -67,21 +70,19 @@ def graph_77K():
 
     plt.show()
 
-
 def graph_77K_reverse():
     """Plot Hall voltage at 77K"""
 
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K with Reverse Current")
 
-    ax, R_H_tuple = plot_data(ax, (ds.df_77K_reverse, '77K'))
+    ax, R_H_tuple = plot_data(ax, (da.df_77K_reverse, '77K'))
 
     ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
     ax.legend(loc='upper right')
 
     plt.show()
-
 
 def graph_300K():
     """Plot Hall voltage at 300K"""
@@ -89,13 +90,12 @@ def graph_300K():
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 300K")
 
-    ax, R_H_tuple = plot_data(ax, (ds.df_300K, '300K'))
+    ax, R_H_tuple = plot_data(ax, (da.df_300K, '300K'))
 
     ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
     ax.legend(loc='upper right')
     plt.show()
-
 
 def graph_300K_reverse():
     """Plot Hall voltage at 300K"""
@@ -103,7 +103,7 @@ def graph_300K_reverse():
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 300K with Reverse Current")
 
-    ax, R_H_tuple = plot_data(ax, (ds.df_300K_reverse, '300K'))
+    ax, R_H_tuple = plot_data(ax, (da.df_300K_reverse, '300K'))
 
     ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
@@ -117,7 +117,7 @@ def graph_77K_300K():
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K")
 
-    ax, R_H = plot_data(ax, (ds.df_77K, '77K'), (ds.df_300K, '300K'))
+    ax, R_H = plot_data(ax, (da.df_77K, '77K'), (da.df_300K, '300K'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
     ax.legend(loc='upper right')
@@ -130,13 +130,12 @@ def graph_77K_forward_and_reverse():
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K, Forward and Reverse Current")
 
-    ax, R_H = plot_data(ax, (ds.df_77K, '77K Forward Current'), (ds.df_77K_reverse, '77K Reverse Current'))
+    ax, R_H = plot_data(ax, (da.df_77K, '77K Forward Current'), (da.df_77K_reverse, '77K Reverse Current'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
     ax.legend(loc='upper right')
 
     plt.show()
-
 
 def graph_300K_forward_and_reverse():
     """Plot 77K with forward and reverse currents"""
@@ -145,8 +144,8 @@ def graph_300K_forward_and_reverse():
     graph_metadata(
         ax, "Magnetic Field vs. Hall Voltage at 300K, Forward and Reverse Current")
 
-    ax, R_H = plot_data(ax, (ds.df_300K, '300K Forward Current'),
-                        (ds.df_300K_reverse, '300K Reverse Current'))
+    ax, R_H = plot_data(ax, (da.df_300K, '300K Forward Current'),
+                        (da.df_300K_reverse, '300K Reverse Current'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
     ax.legend(loc='upper right')
