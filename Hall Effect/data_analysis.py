@@ -6,10 +6,9 @@ from typing import List, Callable
 
 import matplotlib.pyplot as plt 
 import pandas as pd 
-from scipy import optimize, stats
+from scipy.optimize import curve_fit
+from scipy.stats import ttest_ind
 import numpy as np 
-
-from equations import linear 
 
 class LabDataFrame(pd.DataFrame):
 	def __init__(self, *args, **kwargs):
@@ -49,11 +48,11 @@ class LabDataFrame(pd.DataFrame):
 		yerr_data = self[yerr_col]
 		
 		#Create the y-axis fit data 
-		ans, cov = optimize.curve_fit(func, x_data, y_data, sigma=yerr_data, absolute_sigma=True) 
+		ans, cov = curve_fit(func, x_data, y_data, sigma=yerr_data) 
 		m, b = ans 
 		y_fit = func(x_data, m, b)
 		
-		return y_fit, m, b 
+		return y_fit 
 
 	def graph(
 			self, xcol: str, ycol: str, xlabel: str ='', 
@@ -122,13 +121,6 @@ class LabDataFrame(pd.DataFrame):
 
 		plt.show()
 
-	def chisquare(self, obs_col, fit_col):
-		"""Calculate the chisquare between two columns"""
-
-		observed = self[obs_col].to_numpy()
-		expected = self[fit_col].to_numpy()
-		return stats.chisquare(observed, f_exp=expected)
-
 def import_excel(*args, **kwargs):
 	"""Import data to a LabDataFrame"""
 	df = pd.read_excel(*args, **kwargs)
@@ -150,52 +142,89 @@ def B_vs_Vh(df):
 	return df.to_tuple(B=B_cols, V_H=V_H_cols)
 
 def import_magnetocalibs(df):
-	B_tuple = ("B", "delB")
-	data: df.to_tuple(B=B_tuple)
-	return data["B"]
+	R_tuple = ("R", "delR")
+	data = df.to_tuple(R=R_tuple)
+	return data["R"]
 
 def det_magnetores(orient1, orient2):
-	#look into scipy.stats
+	test_results = ttest_ind(orient1, orient2, equal_var=False)
+	print(test_results)
+	if test_results[1] >= 0.05:
+		# In this case accept null hypothesis
+		return False
+	else:
+		# In this case reject null hypothesis
+		return True
 
-	pass
-
-#hall voltage graphs 
 df_77K = import_excel("data/77K.xlsx")
 df_77K_reverse = import_excel("data/77KReverse.xlsx")
 df_300K = import_excel("data/300K.xlsx")
 df_300K_reverse = import_excel("data/300KReverse.xlsx")
-
-#loop through each dataframe and calculate the fit data and chisquare 
-df_arr = [df_77K, df_77K_reverse, df_300K, df_300K_reverse]
-for df in df_arr:
-	
-	#Fit data
-	data = df.fit(linear, 'B', 'V_H', 'delV_H')
-	df['V_H_fit'] = data[0]
-	df.R_H = data[1]
-
-	#Chisquare data 
-	chi = df.chisquare('V_H', 'V_H_fit')
-	df.goodness, df.p_value = chi
-
-df_leads = import_excel("data/leads.xlsx")
+df_leads = import_excel("data/leads_without_mag.xlsx")
+df_mag_leads = import_excel("data/leads_with_mag.xlsx")
 
 if __name__ == '__main__':
 
-	pass 
+	from equations import linear
+	# Determining if there is magnetoresistance for the Hall Voltage and voltage measurements
+	magnetores_results = []
 
-	# df_77K.graph(
-	# 		'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)', 
-	# 		ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K', 
-	# 		fit_func=linear, data_label='77K', legend=True
-	# 	)
+	# Resistance measurements across the set of leads with the magnetic field active
+	mag_leads_2_8 = import_magnetocalibs(df_mag_leads)[0][3]
+	mag_leads_8_2 = import_magnetocalibs(df_mag_leads)[0][12]
 
-	# df_300K.graph(
-    #         'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)',
-    #      			ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K',
-    #      			fit_func=linear, data_label='300K', legend=True
-    #     )
+	# Resistance measurements across the set of leads with the magnetic field not active
+	leads_2_8 = import_magnetocalibs(df_leads)[0][3]
+	leads_8_2 = import_magnetocalibs(df_leads)[0][12]
 
-	
-	
+	# Compiling data and determining if there is magnetoresistance
+	mag_sample = [mag_leads_2_8, mag_leads_8_2]
+	magless_sample = [leads_2_8, leads_8_2]
+	magnetores_results.append(det_magnetores(mag_sample, magless_sample))
+
+	# Resistance measurements across the set of leads with the magnetic field active
+	mag_leads_3_4 = import_magnetocalibs(df_mag_leads)[0][5]
+	mag_leads_4_3 = import_magnetocalibs(df_mag_leads)[0][8]
+
+	# Resistance measurements across the set of leads with the magnetic field not active
+	leads_3_4 = import_magnetocalibs(df_leads)[0][5]
+	leads_4_3 = import_magnetocalibs(df_leads)[0][8]
+
+	# Compiling data and determining if there is magnetoresistance
+	mag_sample = [mag_leads_3_4, mag_leads_4_3]
+	magless_sample = [leads_3_4, leads_4_3]
+	magnetores_results.append(det_magnetores(mag_sample, magless_sample))
+
+	# Procedures for handling the cases where there is magnetoresistance and there is no magnetoresistance
+	for result in magnetores_results:
+		if not result:
+			pass
+		else:
+			# Placeholder for factoring in magnetoresistance should there be any
+			print("There is magnetoresistance")
+
+	# Removing voltage offsets from dataframes
+	feb_18_offset = 0.003 * 10**(-3)
+	feb_25_offset = -0.030 * 10**(-3)
+	feb_18_data = [df_77K, df_77K_reverse, df_300K]
+	feb_25_data = [df_300K_reverse]
+
+	for df in feb_18_data:
+		df["V_H"] -= feb_18_offset
+
+	for df in feb_25_data:
+		df["V_H"] -= feb_25_offset
+
+	df_77K.graph(
+			'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)', 
+			ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K', 
+			fit_func=linear, data_label='77K', legend=True
+		)
+
+	df_300K.graph(
+            'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)',
+         			ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K',
+         			fit_func=linear, data_label='300K', legend=True
+        )
+
 
