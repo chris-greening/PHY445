@@ -6,8 +6,10 @@ from typing import List, Callable
 
 import matplotlib.pyplot as plt 
 import pandas as pd 
-from scipy.optimize import curve_fit
+from scipy import optimize, stats
 import numpy as np 
+
+from equations import linear 
 
 class LabDataFrame(pd.DataFrame):
 	def __init__(self, *args, **kwargs):
@@ -47,11 +49,11 @@ class LabDataFrame(pd.DataFrame):
 		yerr_data = self[yerr_col]
 		
 		#Create the y-axis fit data 
-		ans, cov = curve_fit(func, x_data, y_data, sigma=yerr_data) 
+		ans, cov = optimize.curve_fit(func, x_data, y_data, sigma=yerr_data, absolute_sigma=True) 
 		m, b = ans 
 		y_fit = func(x_data, m, b)
 		
-		return y_fit 
+		return y_fit, m, b 
 
 	def graph(
 			self, xcol: str, ycol: str, xlabel: str ='', 
@@ -120,6 +122,13 @@ class LabDataFrame(pd.DataFrame):
 
 		plt.show()
 
+	def chisquare(self, obs_col, fit_col):
+		"""Calculate the chisquare between two columns"""
+
+		observed = self[obs_col].to_numpy()
+		expected = self[fit_col].to_numpy()
+		return stats.chisquare(observed, f_exp=expected)
+
 def import_excel(*args, **kwargs):
 	"""Import data to a LabDataFrame"""
 	df = pd.read_excel(*args, **kwargs)
@@ -150,27 +159,42 @@ def det_magnetores(orient1, orient2):
 
 	pass
 
+#hall voltage graphs 
 df_77K = import_excel("data/77K.xlsx")
 df_77K_reverse = import_excel("data/77KReverse.xlsx")
 df_300K = import_excel("data/300K.xlsx")
 df_300K_reverse = import_excel("data/300KReverse.xlsx")
+
+#loop through each dataframe and calculate the fit data and chisquare 
+df_arr = [df_77K, df_77K_reverse, df_300K, df_300K_reverse]
+for df in df_arr:
+	
+	#Fit data
+	data = df.fit(linear, 'B', 'V_H', 'delV_H')
+	df['V_H_fit'] = data[0]
+	df.R_H = data[1]
+
+	#Chisquare data 
+	chi = df.chisquare('V_H', 'V_H_fit')
+	df.goodness, df.p_value = chi
+
 df_leads = import_excel("data/leads.xlsx")
 
 if __name__ == '__main__':
 
-	from equations import linear
+	pass 
 
-	df_77K.graph(
-			'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)', 
-			ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K', 
-			fit_func=linear, data_label='77K', legend=True
-		)
+	# df_77K.graph(
+	# 		'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)', 
+	# 		ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K', 
+	# 		fit_func=linear, data_label='77K', legend=True
+	# 	)
 
-	df_300K.graph(
-            'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)',
-         			ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K',
-         			fit_func=linear, data_label='300K', legend=True
-        )
+	# df_300K.graph(
+    #         'B', 'V_H', yerr_col='delV_H', xlabel='Magnetic Field (mT)',
+    #      			ylabel='Hall Voltage', title='Magnetic Field vs. Hall Voltage at 77K',
+    #      			fit_func=linear, data_label='300K', legend=True
+    #     )
 
 	
 	
