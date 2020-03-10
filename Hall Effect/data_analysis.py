@@ -7,6 +7,7 @@ from typing import List, Callable
 import matplotlib.pyplot as plt 
 import pandas as pd 
 from scipy import stats, optimize 
+from uncertainties import ufloat 
 
 import numpy as np 
 
@@ -130,6 +131,12 @@ class LabDataFrame(pd.DataFrame):
 
 		plt.show()
 
+	def sort_values(self, *args, **kwargs):
+		"""Return the sorted DataFrame as a LabDataFrame"""
+
+		sorted_df = super().sort_values(*args, **kwargs)
+		return LabDataFrame(sorted_df)
+
 def import_excel(*args, **kwargs):
 	"""Import data to a LabDataFrame"""
 	df = pd.read_excel(*args, **kwargs)
@@ -139,6 +146,35 @@ def import_csv(*args, **kwargs):
 	"""Import data to a LabDataFrame"""
 	df = pd.read_csv(*args, **kwargs)
 	return LabDataFrame(df)
+
+def average_dataframes(df1, df2, *args):
+	"""Average two dataframe's central values and properly calculate uncertainty"""
+	
+	data_dict = {}
+	for tup in args: 
+		central_col, u_col = tup 
+ 
+		central_series1 = df1[central_col]
+		central_series1 = np.abs(central_series1)
+		u_series1 = df1[u_col]
+		u_series1 = np.abs(u_series1)
+		ufloats_1 = np.array([ufloat(tup) for tup in zip(central_series1, u_series1)])
+
+		central_series2 = df2[central_col]
+		central_series2 = np.abs(central_series2)
+		u_series2 = df2[u_col]
+		u_series2 = np.abs(u_series2)
+		ufloats_2 = np.array([ufloat(tup) for tup in zip(central_series2, u_series2)])
+
+		averages = (ufloats_1+ufloats_2)/2
+		central_avg = [val.n for val in averages]
+		uncertainties_avg = [val.s for val in averages]
+		
+		data_dict[central_col] = central_avg
+		data_dict[u_col] = uncertainties_avg
+
+	return LabDataFrame(data_dict)
+
 
 def subtract_offset(arr: List[float], offset: float):
 	"""Subtract an offset form an array"""
@@ -165,10 +201,22 @@ def det_magnetores(orient1, orient2):
 		# In this case reject null hypothesis
 		return True
 
+
+B_cols = ('B', 'delB')
+V_H_cols = ('V_H', 'delV_H')
+
 df_77K = import_excel("data/77K.xlsx")
+df_77K = df_77K.sort_values('B')
 df_77K_reverse = import_excel("data/77KReverse.xlsx")
+df_77K_reverse = df_77K_reverse.sort_values('B')
+df_77K_avg = average_dataframes(df_77K, df_77K_reverse, B_cols, V_H_cols)
+
 df_300K = import_excel("data/300K.xlsx")
+df_300K = df_300K.sort_values('B')
 df_300K_reverse = import_excel("data/300KReverse.xlsx")
+df_300K_reverse = df_300K_reverse.sort_values('B')
+df_300K_avg = average_dataframes(df_300K, df_300K_reverse, B_cols, V_H_cols)
+
 df_leads = import_excel("data/leads_without_mag.xlsx")
 df_mag_leads = import_excel("data/leads_with_mag.xlsx")
 
@@ -185,7 +233,7 @@ for df in feb_25_data:
 	df["V_H"] -= feb_25_offset
 
 #Calculating fit data and goodness of fit 
-df_arr = [df_77K, df_77K_reverse, df_300K, df_300K_reverse]
+df_arr = [df_77K, df_77K_reverse, df_77K_avg, df_300K, df_300K_reverse, df_300K_avg]
 for df in df_arr:
 
 	#Fit data
