@@ -42,6 +42,9 @@ def solve_everything(R, w, L, V_H, I, B):
     data_dict['R_square'] = R_square.n 
     data_dict['delR_square'] = R_square.s 
 
+    data_dict['R_H'] = R_H.n
+    data_dict['delR_H'] = R_H.s
+
     data_dict['n'] = car_dens.n
     data_dict['deln'] = car_dens.s 
 
@@ -95,3 +98,4 @@ if __name__ == '__main__':
         i += 2 
     print(string)
 
+    
