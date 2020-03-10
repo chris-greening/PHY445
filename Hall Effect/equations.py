@@ -5,16 +5,29 @@
 from functools import partial 
 
 import numpy as np 
-from scipy.constants import physical_constants
+from scipy import constants
 
-def mobility(R_h, R_square):
+e = constants.e
+m_star = .067
+
+def resistance_per_square(R, w, L):
+    return (R*w)/L
+
+def hall_coefficient(V_H, I, B):
+    return V_H/(I*B)
+
+def carrier_density(R_H):
+    return 1/(R_H*e)
+
+def mobility(R_H, R_square):
     """Calculate mobility from Hall resistance and Resistance per unit square"""
-    return R_h/R_square 
+    return R_H/R_square 
 
-def hall_coefficient(B, R_H, I): 
-    """Equation for the Hall voltage"""
-    
-    return R_H*B*I
+def relaxation_time(mu):
+    return (mu*m_star)/e
+
+def mean_free_path(tau):
+    return 1/tau
 
 def linear(x, m, b):
     return m*x + b
