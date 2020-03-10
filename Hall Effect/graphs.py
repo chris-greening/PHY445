@@ -83,6 +83,20 @@ def graph_77K_reverse():
     plt.show()
 
 
+def graph_77K_avg():
+    """Plot Hall voltage at 77K"""
+
+    ax = plt.subplot(111)
+    graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K")
+
+    ax, R_H_tuple = plot_data(ax, (ds.df_77K_avg, '77K'))
+
+    ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
+            ha='center', va='center', transform=ax.transAxes, fontsize=15)
+    ax.legend(loc='upper right')
+
+    plt.show()
+
 def graph_300K():
     """Plot Hall voltage at 300K"""
 
@@ -109,6 +123,20 @@ def graph_300K_reverse():
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
     ax.legend('upper right')
 
+    plt.show()
+
+
+def graph_300K_avg():
+    """Plot Hall voltage at 300K"""
+
+    ax = plt.subplot(111)
+    graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 300K")
+
+    ax, R_H_tuple = plot_data(ax, (ds.df_300K_avg, '300K'))
+
+    ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
+            ha='center', va='center', transform=ax.transAxes, fontsize=15)
+    ax.legend(loc='upper right')
     plt.show()
 
 def graph_77K_300K():
@@ -154,4 +182,4 @@ def graph_300K_forward_and_reverse():
     plt.show()
 
 if __name__ == '__main__':
-    graph_77K()
+    graph_77K_avg()
