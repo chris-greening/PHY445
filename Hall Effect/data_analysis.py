@@ -205,6 +205,12 @@ def det_magnetores(orient1, orient2):
 		# In this case reject null hypothesis
 		return True
 
+def print_stat_data(df):
+	"""Print statistical analyses of results from dataframe"""
+	print("chisq: " + str(df.goodness))
+	print("p-val: " + str(df.p_value))
+	print("m: " + str(df.m))
+	print("b: " + str(df.b))
 
 B_cols = ('B', 'delB')
 V_R_cols = ('V_R', 'delV_R')
@@ -248,7 +254,8 @@ for df in df_arr:
 	#Fit data
 	data = df.fit(linear, 'B', 'V_H', 'delV_H')
 	df['V_H_fit'] = data[0]
-	df.R_H = data[1]
+	df.m = data[1]
+	df.b = data[2]
 
 	#Chisquare data
 	chi = df.chisquare('V_H', 'V_H_fit')
