@@ -33,6 +33,7 @@ def plot_data(ax, *args):
         
         #Experimental data 
         B = df['B']
+        sigB = df['delB']
         data = df.to_tuple(V_H=('V_H', 'delV_H'))
         V_Ho, sigV_H = data['V_H']
 
@@ -45,7 +46,7 @@ def plot_data(ax, *args):
 
         #Plot onto the axes
         ax.plot(B, V_Hfit, label=f'{label} best fit')
-        ax.errorbar(B, V_Ho, yerr=sigV_H, fmt='.', label=f'{label} observed')
+        ax.errorbar(B, V_Ho, xerr=sigB, yerr=sigV_H, fmt='.', label=f'{label} observed')
 
         #append Hall coefficient to arr
         R_H = np.abs(R_H)
@@ -86,14 +87,24 @@ def graph_77K_reverse():
 def graph_77K_avg():
     """Plot Hall voltage at 77K"""
 
+    df = ds.df_77K_avg
+
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K")
 
-    ax, R_H_tuple = plot_data(ax, (ds.df_77K_avg, '77K'))
+    ax, R_H_tuple = plot_data(ax, (df, '77K'))
 
-    ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
+    fit_str = '$y_{fit} = $'
+    other_str = '(%0.4f)*x + %0.4f' % (df.m, df.b)
+    full_string = fit_str + other_str
+    ax.text(.35, .9, full_string,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
-    ax.legend(loc='upper right')
+
+    chisq = df.goodness
+    ax.text(.2, .8, '$\chi ^2 = $%0.4f' % chisq,
+            ha='center', va='center', transform=ax.transAxes, fontsize=15)
+
+    ax.legend(loc='lower right')
 
     plt.show()
 
@@ -107,6 +118,8 @@ def graph_300K():
 
     ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
+    
+    ax.text()
     ax.legend(loc='upper right')
     plt.show()
 
@@ -129,26 +142,37 @@ def graph_300K_reverse():
 def graph_300K_avg():
     """Plot Hall voltage at 300K"""
 
+    df = ds.df_300K_avg
+
     ax = plt.subplot(111)
     graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 300K")
 
-    ax, R_H_tuple = plot_data(ax, (ds.df_300K_avg, '300K'))
+    ax, R_H_tuple = plot_data(ax, (df, '300K'))
 
-    ax.text(.2, .9, '$R_H = $%0.4f' % R_H_tuple,
+    fit_str = '$y_{fit} = $'
+    other_str = '(%0.4f)*x + %0.4f' % (df.m, df.b)
+    full_string = fit_str + other_str
+    ax.text(.35, .9, full_string,
             ha='center', va='center', transform=ax.transAxes, fontsize=15)
-    ax.legend(loc='upper right')
+
+    chisq = df.goodness
+    ax.text(.2, .8, '$\chi ^2 = $%0.4f' % chisq,
+            ha='center', va='center', transform=ax.transAxes, fontsize=15)
+
+    ax.legend(loc='lower right')
+
     plt.show()
 
 def graph_77K_300K():
     """Plot 77K and 300K on the same graph to show difference"""
     
     ax = plt.subplot(111)
-    graph_metadata(ax, "Magnetic Field vs. Hall Voltage at 77K")
+    graph_metadata(ax, "Comparing Magnetic Field vs. Hall Voltage at 77K and 300K")
 
-    ax, R_H = plot_data(ax, (ds.df_77K, '77K'), (ds.df_300K, '300K'))
+    ax, R_H = plot_data(ax, (ds.df_77K_avg, '77K'), (ds.df_300K_avg, '300K'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
-    ax.legend(loc='upper right')
+    ax.legend(loc='upper left')
 
     plt.show()
 
@@ -161,7 +185,7 @@ def graph_77K_forward_and_reverse():
     ax, R_H = plot_data(ax, (ds.df_77K, '77K Forward Current'), (ds.df_77K_reverse, '77K Reverse Current'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
-    ax.legend(loc='upper right')
+    ax.legend(loc='upper left')
 
     plt.show()
 
@@ -177,9 +201,9 @@ def graph_300K_forward_and_reverse():
                         (ds.df_300K_reverse, '300K Reverse Current'))
 
     # ax.text(10, 2.5, '$R_H = $%0.4f' % R_H, fontsize=15)
-    ax.legend(loc='upper right')
+    ax.legend(loc='upper left')
 
     plt.show()
 
 if __name__ == '__main__':
-    graph_77K_avg()
+    graph_300K_forward_and_reverse()
