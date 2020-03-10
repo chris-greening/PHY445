@@ -11,7 +11,7 @@ e = constants.e
 m_star = .067
 
 def resistance_per_square(R, w, L):
-    return (L/w)*R
+    return (w/L)*R
 
 def hall_coefficient(V_H, I, B):
     return V_H/(I*B)
