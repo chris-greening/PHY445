@@ -42,8 +42,8 @@ def solve_everything(R, w, L, V_H, I, B):
     data_dict['R_square'] = R_square.n 
     data_dict['delR_square'] = R_square.s 
 
-    data_dict['Carrier Density'] = car_dens.n
-    data_dict['delCarrier Density'] = car_dens.s 
+    data_dict['n'] = car_dens.n
+    data_dict['deln'] = car_dens.s 
 
     data_dict['Mu'] = mu.n 
     data_dict['delMu'] = mu.s 
@@ -59,7 +59,7 @@ def solve_everything(R, w, L, V_H, I, B):
     return DataFrame(data_dict)
 
 if __name__ == '__main__': 
-    #300K calculations 
+
     R = ufloat(8048.91,88.16)
     L = ufloat(177.27E-6,.45E-6)
     w = ufloat(100E-6,.45E-6)
@@ -78,8 +78,20 @@ if __name__ == '__main__':
     df_300K_calc = df_300K_calc.rename(columns={0: '300K'})
     df_total = df_77K_calc.join(df_300K_calc)
 
+    #pretty print the data 
+    string = ''
+    i = 0 
+    while i < len(df_total):
+        row1 = df_total.iloc[i]
+        new_row_name = row1.name 
 
+        row2 = df_total.iloc[i+1]
+        
+        left = str(row1['77K']) + r' $\pm$ ' + str(row2['77K'])
+        right = str(row1['300K']) + r' $\pm$ ' + str(row2['300K'])
 
-    #77K calculations 
-
+        string += f'{new_row_name} & {left} & {right} \\\\\n'
+        
+        i += 2 
+    print(string)
 
