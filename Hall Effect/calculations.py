@@ -61,13 +61,25 @@ def solve_everything(R, w, L, V_H, I, B):
 if __name__ == '__main__': 
     #300K calculations 
     R = ufloat(8048.91,88.16)
-    w = ufloat(177.27E-6,.45E-6)
-    L = ufloat(100E-6,.45E-6)
+    L = ufloat(177.27E-6,.45E-6)
+    w = ufloat(100E-6,.45E-6)
+    I = ufloat(9.67E-6, .1E-6)
 
-    V_H = ufloat(.903997E-3,.001E-3) 
-    I = ufloat(9.67E-6,.1E-6) 
-    B = ufloat(89.8E-3,.1E-3)
+    V_H_77K = ufloat(1.3125E-3,.011E-3)  
+    B_77K = ufloat(74.8E-3,.071E-3)
 
-    df = solve_everything(R,w,L,V_H,I,B)
+    V_H_300K = ufloat(.7765E-3, .0007E-3)
+    B_300K = ufloat(75.9E-3, .071E-3)
+
+    df_77K_calc = solve_everything(R,w,L,V_H_77K,I,B_77K).T
+    df_300K_calc = solve_everything(R,w,L,V_H_300K, I, B_300K).T
+
+    df_77K_calc = df_77K_calc.rename(columns={0: '77K'})
+    df_300K_calc = df_300K_calc.rename(columns={0: '300K'})
+    df_total = df_77K_calc.join(df_300K_calc)
+
+
+
+    #77K calculations 
 
 
