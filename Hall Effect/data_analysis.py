@@ -203,19 +203,20 @@ def det_magnetores(orient1, orient2):
 
 
 B_cols = ('B', 'delB')
+V_R_cols = ('V_R', 'delV_R')
 V_H_cols = ('V_H', 'delV_H')
 
 df_77K = import_excel("data/77K.xlsx")
 df_77K = df_77K.sort_values('B')
 df_77K_reverse = import_excel("data/77KReverse.xlsx")
 df_77K_reverse = df_77K_reverse.sort_values('B')
-df_77K_avg = average_dataframes(df_77K, df_77K_reverse, B_cols, V_H_cols)
+df_77K_avg = average_dataframes(df_77K, df_77K_reverse, B_cols, V_R_cols, V_H_cols)
 
 df_300K = import_excel("data/300K.xlsx")
 df_300K = df_300K.sort_values('B')
 df_300K_reverse = import_excel("data/300KReverse.xlsx")
 df_300K_reverse = df_300K_reverse.sort_values('B')
-df_300K_avg = average_dataframes(df_300K, df_300K_reverse, B_cols, V_H_cols)
+df_300K_avg = average_dataframes(df_300K, df_300K_reverse, B_cols, V_R_cols, V_H_cols)
 
 df_leads = import_excel("data/leads_without_mag.xlsx")
 df_mag_leads = import_excel("data/leads_with_mag.xlsx")
