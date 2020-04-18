@@ -221,7 +221,7 @@ def det_magnetores(orient1, orient2):
 		return True
 
 def local_fit(left_i, right_i, df):
-	
+	pass
 
 
 def print_stat_data(df):
