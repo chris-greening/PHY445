@@ -1,8 +1,6 @@
 #Author: Chris Greening 
 #Date: 3/3/2020
-#Purpose: Data analysis for Hall Effect 
-
-
+#Purpose: Leveraging pandas for lab specific data structures and functions 
 
 from typing import List, Callable
 
@@ -12,6 +10,8 @@ from scipy import stats, optimize
 from uncertainties import ufloat 
 
 import numpy as np 
+
+from equations import linear 
 
 class LabDataFrame(pd.DataFrame):
 	def __init__(self, *args, **kwargs):
@@ -153,80 +153,20 @@ def import_csv(*args, **kwargs):
 
 def import_spe(fpath):
 	"""Import data from an Spe file to a LabDataFrame"""
+	"""Convert a Spectrum file to a .csv"""
+
+    path_obj = Path(fpath)
+    suffix = path_obj.suffix
     
-	with open(fpath, 'r') as infile:
-	    lines = infile.readlines()
+
+    with open(fpath, 'r') as infile:
+        lines = infile.readlines()
        
     #carve metadata off the .Spe files 
-	relevant = lines[12:]
-	relevant = [line.replace('\n', '') for line in relevant]
-	
-	end_index = relevant.index("$ROI:")
-	relevant = [line.strip() for line in relevant[:end_index]]
-	numeric_data = [int(line) for line in relevant]
+    relevant = lines[12:]
 
-	return pd.DataFrame(numeric_data)
+    end_index = relevant.find("$ROI:")
+    relevant = relevant[:end_index]
 
-def average_dataframes(df1, df2, *args):
-	"""Average two dataframe's central values and properly calculate uncertainty"""
-	
-	data_dict = {}
-	for tup in args: 
-		central_col, u_col = tup 
- 
-		central_series1 = df1[central_col]
-		central_series1 = np.abs(central_series1)
-		u_series1 = df1[u_col]
-		u_series1 = np.abs(u_series1)
-		ufloats_1 = np.array([ufloat(tup) for tup in zip(central_series1, u_series1)])
+    df = pd.DataFrame(relevant)
 
-		central_series2 = df2[central_col]
-		central_series2 = np.abs(central_series2)
-		u_series2 = df2[u_col]
-		u_series2 = np.abs(u_series2)
-		ufloats_2 = np.array([ufloat(tup) for tup in zip(central_series2, u_series2)])
-
-		averages = (ufloats_1+ufloats_2)/2
-		central_avg = [val.n for val in averages]
-		uncertainties_avg = [val.s for val in averages]
-		
-		data_dict[central_col] = central_avg
-		data_dict[u_col] = uncertainties_avg
-
-	return LabDataFrame(data_dict)
-
-def subtract_offset(arr: List[float], offset: float):
-	"""Subtract an offset form an array"""
-	return arr - offset 
-
-def B_vs_Vh(df):
-	"""Return magnetic field and Hall Voltage values from the dataframe"""
-	B_cols = ("B", "delB")
-	V_H_cols = ("V_H", "delV_H") 
-	return df.to_tuple(B=B_cols, V_H=V_H_cols)
-
-def import_magnetocalibs(df):
-	R_tuple = ("R", "delR")
-	data = df.to_tuple(R=R_tuple)
-	return data["R"]
-
-def det_magnetores(orient1, orient2):
-	test_results = stats.ttest_ind(orient1, orient2, equal_var=False)
-	print(test_results)
-	if test_results[1] >= 0.05:
-		# In this case accept null hypothesis
-		return False
-	else:
-		# In this case reject null hypothesis
-		return True
-
-def local_fit(left_i, right_i, df):
-	
-
-
-def print_stat_data(df):
-	"""Print statistical analyses of results from dataframe"""
-	print("chisq: " + str(df.goodness))
-	print("p-val: " + str(df.p_value))
-	print("m: " + str(df.m))
-	print("b: " + str(df.b))

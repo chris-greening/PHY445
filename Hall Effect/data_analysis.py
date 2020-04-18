@@ -151,6 +151,26 @@ def import_csv(*args, **kwargs):
 	df = pd.read_csv(*args, **kwargs)
 	return LabDataFrame(df)
 
+def import_spe(fpath):
+	"""Import data from an Spe file to a LabDataFrame"""
+	"""Convert a Spectrum file to a .csv"""
+
+    path_obj = Path(fpath)
+    suffix = path_obj.suffix
+    
+
+    with open(fpath, 'r') as infile:
+        lines = infile.readlines()
+       
+    #carve metadata off the .Spe files 
+    relevant = lines[12:]
+
+    end_index = relevant.find("$ROI:")
+    relevant = relevant[:end_index]
+
+    df = pd.DataFrame(relevant)
+
+
 def average_dataframes(df1, df2, *args):
 	"""Average two dataframe's central values and properly calculate uncertainty"""
 	

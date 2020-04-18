@@ -5,6 +5,7 @@
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import numpy as np 
+from numpy import pi, sqrt, exp
 from scipy import asarray as ar, exp
 
 # x = ar(range(10))
@@ -14,9 +15,10 @@ from scipy import asarray as ar, exp
 # mean = sum(x*y)/n  # note this correction
 # sigma = sum(y*(x-mean)**2)/n  # note this correction
 
-
 def gaus(x, a, x0, sigma):
-    return a*exp(-(x-x0)**2/(2*sigma**2))
+    # return (1/(sqrt(2*pi)*sigma))*exp(-(x-x0)**2/(2*sigma**2))
+    return a*exp(-(x-x0)**2/(2*sigma**2)) + e
+
 
 
 # popt, pcov = curve_fit(gaus, x, y, p0=[1, mean, sigma])
@@ -25,10 +27,9 @@ def gaus(x, a, x0, sigma):
 # plt.plot(x, gaus(x, *popt), 'ro:', label='fit')
 # plt.legend()
 # plt.title('Fig. 3 - Fit for Time Constant')
-# plt.xlabel('Time (s)')
 # plt.ylabel('Voltage (V)')
 # plt.show()
 
-y = np.random.normal(20, 1,10000)
-plt.hist(y, 10)
-plt.show()
+# y = np.random.normal(20, 1,10000)
+# plt.hist(y, 10)
+# plt.show()
