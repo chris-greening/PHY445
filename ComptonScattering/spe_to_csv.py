@@ -2,35 +2,36 @@
 #Date: 3/12/2020 
 #Purpose: Convert .Spe file to .csv 
 
+import os 
 from pathlib import Path 
 
 import pandas as pd 
 from scipy.signal import find_peaks
 
-def convert_file(fpath):
-    """Convert a Spectrum file to a .csv"""
+from labpandas import import_spe
+
+def convert_folder_spe(fpath):
+    """Convert all the .spe files within a folder to .csv's"""
     
-    path_obj = Path(fpath)
-    suffix = path_obj.suffix
+    #Filter dir down to only .Spe files 
+    spe_files = [os.path.join(fpath, infile) 
+                for infile in os.listdir(fpath) 
+                    if Path(infile).suffix == '.Spe']
     
-    
-    csv_fpath = 
+    #Import .Spe files as LabDataframes
+    dataframes = [(import_spe(fpath), create_csv_fpath(fpath)) for fpath in spe_files]
 
+    #Write each of the imported Spe's as .csv 
+    for df, fpath in dataframes:
+        df.to_csv(fpath, index=False)
 
-    with open(fpath, 'r') as infile:
-        lines = infile.readlines()
-       
-    #carve metadata off the .Spe files 
-    relevant = lines[12:]
-
-    end_index = relevant.find("$ROI:")
-    relevant = relevant[:end_index]
-
-    df = pd.DataFrame(relevant)
-
+def create_csv_fpath(fpath):
+    """Removes the suffix of fpath arg and returns as .csv"""
+    fpath_suffix = Path(fpath).suffix 
+    return fpath.replace(fpath_suffix, ".csv")
 
 if __name__ == '__main__':
-    abs_fpath = r''
-    spe = convert_file(abs_fpath)
+    fpath = r'C:\Users\Chris\Documents\pythonstuff\PHY445\ComptonScattering\data\calibrations\Spe'
+    convert_folder_spe(fpath)
 
 
